@@ -6,26 +6,16 @@
   <title>ศูนย์อัปโหลด/ดาวน์โหลดแอพ</title>
   <style>
     :root {
-      --bg: #0f1220;
-      --panel: #171a2b;
-      --text: #e5e7ef;
-      --muted: #a9afc7;
-      --primary: #6ea0ff;
-      --primary-hover: #85afff;
-      --danger: #ff6e6e;
-      --success: #59d37d;
-      --warning: #f5c04e;
-      --border: #2a314a;
-      --gray: #3a415f;
-      --disabled: #666c86;
+      --bg: #0f1220; --panel: #171a2b; --text: #e5e7ef; --muted: #a9afc7;
+      --primary: #6ea0ff; --primary-hover: #85afff; --danger: #ff6e6e;
+      --success: #59d37d; --warning: #f5c04e; --border: #2a314a;
+      --gray: #3a415f; --disabled: #666c86;
     }
     * { box-sizing: border-box }
     html, body {
       margin: 0; padding: 0; background: var(--bg); color: var(--text);
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
     }
-    a { color: var(--primary); text-decoration: none }
-    a:hover { color: var(--primary-hover) }
     header {
       position: sticky; top: 0; z-index: 10;
       background: rgba(23,26,43,0.9); backdrop-filter: blur(8px);
@@ -41,6 +31,7 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);
       background: var(--panel); color: var(--text); cursor: pointer; transition: .2s;
+      user-select: none;
     }
     .btn:hover { background: #1e2237; }
     .btn-primary { background: var(--primary); color: #0b1020; border-color: transparent; }
@@ -48,7 +39,6 @@
     .btn-ghost { background: transparent; }
     .btn-danger { background: var(--danger); color: #0b1020; border-color: transparent; }
     .btn-success { background: var(--success); color: #0b1020; border-color: transparent; }
-    .btn-warning { background: var(--warning); color: #0b1020; border-color: transparent; }
     .btn[disabled], .btn.disabled {
       cursor: not-allowed; opacity: .6; background: var(--gray); color: #cfd5ee;
     }
@@ -59,9 +49,7 @@
     }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    @media (max-width: 900px) {
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
     .field { display: flex; flex-direction: column; gap: 8px; }
     .field label { font-size: 14px; color: var(--muted); }
     .input, textarea, select {
@@ -96,16 +84,13 @@
     }
     .searchbar { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; }
     @media (max-width: 700px) { .searchbar { grid-template-columns: 1fr; } }
-    .detail {
-      display: grid; grid-template-columns: 160px 1fr; gap: 16px;
-    }
+    .detail { display: grid; grid-template-columns: 160px 1fr; gap: 16px; }
     @media (max-width: 700px) { .detail { grid-template-columns: 1fr; } }
     .divider { border-top: 1px solid var(--border); margin: 12px 0; }
     .note { font-size: 12px; color: var(--muted); }
     footer { padding: 24px 16px; color: var(--muted); text-align: center; }
     .pill { padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; }
     .stack { display: flex; flex-direction: column; gap: 8px; }
-    .nowrap { white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -113,23 +98,23 @@
     <div class="nav">
       <h1>ศูนย์แอพชุมชน</h1>
       <div class="spacer"></div>
-      <button class="btn btn-ghost" data-nav="list">รายการดาวน์โหลด</button>
-      <button class="btn btn-primary" data-nav="upload">อัปโหลดแอพ/โปรแกรม</button>
+      <button type="button" class="btn btn-ghost" data-nav="list">รายการดาวน์โหลด</button>
+      <button type="button" class="btn btn-primary" data-nav="upload">อัปโหลดแอพ/โปรแกรม</button>
     </div>
   </header>
 
   <main>
-    <!-- หน้าเลือก -->
+    <!-- หน้าเริ่มต้น -->
     <section id="home" class="panel">
       <div class="grid-2">
         <div class="stack">
           <h2 style="margin:0">เริ่มต้น</h2>
-          <p>ด้านบนมีปุ่มให้เลือก “รายการดาวน์โหลด” หรือ “อัปโหลดแอพ/โปรแกรม”。คุณสามารถอัปโหลดไฟล์สำหรับเดสก์ท็อป (PC) หรือมือถือ (APK) และระบุโปรไฟล์, ชื่อ, คำอธิบาย, เวอร์ชั่น, ประเภทแอพ/เกม</p>
+          <p>เลือก “อัปโหลดแอพ/โปรแกรม” เพื่อเพิ่มรายการใหม่ หรือไปที่ “รายการดาวน์โหลด” เพื่อดูและค้นหาแอพทั้งหมดในระบบของคุณ</p>
           <div class="row">
-            <button class="btn btn-primary" data-nav="upload">เลือกอัปโหลด</button>
-            <button class="btn" data-nav="list">ไปหน้ารายการดาวน์โหลด</button>
+            <button type="button" class="btn btn-primary" data-nav="upload">เลือกอัปโหลด</button>
+            <button type="button" class="btn" data-nav="list">ไปหน้ารายการดาวน์โหลด</button>
           </div>
-          <p class="note">ระบบจะปรับปุ่มดาวน์โหลดตามอุปกรณ์ที่คุณใช้อยู่ (PC/มือถือ) และปุ่มจะเป็นสีเทาเมื่อไม่มีไฟล์สำหรับแพลตฟอร์มนั้น</p>
+          <p class="note">ระบบจะปรับปุ่มดาวน์โหลดตามอุปกรณ์ (PC/มือถือ) และปุ่มจะเป็นสีเทาเมื่อไม่มีไฟล์สำหรับแพลตฟอร์มนั้น</p>
         </div>
         <div class="stack">
           <div class="badge">อุปกรณ์ของคุณ: <span id="deviceLabel">ตรวจสอบ...</span></div>
@@ -143,6 +128,15 @@
     <section id="upload" class="panel" hidden>
       <h2 style="margin-top:0">อัปโหลดแอพหรือโปรแกรม</h2>
 
+      <div class="panel" style="margin-bottom:12px">
+        <strong>คำแนะนำ:</strong>
+        <ul style="margin:8px 0 0 18px;">
+          <li>จำเป็นต้องใส่ “ชื่อแอพ” และ “ประเภทแอพ/เกม”</li>
+          <li>ไฟล์มือถือ (APK/AAB) ไม่จำเป็นต้องใส่ แต่ถ้าไม่ใส่ ปุ่มดาวน์โหลดบนมือถือจะเป็นสีเทา</li>
+          <li>เพื่อความเสถียรในการบันทึกข้อมูล โปรดจำกัดขนาดไฟล์แต่ละแพลตฟอร์มไม่เกิน 5 MB</li>
+        </ul>
+      </div>
+
       <div class="grid-2">
         <!-- โปรไฟล์และข้อมูลหลัก -->
         <div class="panel">
@@ -153,7 +147,7 @@
               <div class="field">
                 <label>รูปโปรไฟล์แอพ (PNG/JPG)</label>
                 <input class="input" type="file" id="profileInput" accept="image/*" />
-                <div class="hint">ไม่บังคับ แต่แนะนำให้ใส่เพื่อให้รายการดูน่าสนใจ</div>
+                <div class="hint">ไม่บังคับ แต่แนะนำให้ใส่เพื่อความน่าสนใจ</div>
               </div>
               <div class="grid-2">
                 <div class="field">
@@ -175,7 +169,7 @@
               </div>
               <div class="field">
                 <label>คำอธิบาย</label>
-                <textarea id="descInput" placeholder="เล่าให้สั้น กระชับ ว่าทำอะไร มีจุดเด่นอะไร"></textarea>
+                <textarea id="descInput" placeholder="เล่าสั้นๆ ว่าทำอะไร จุดเด่นอะไร"></textarea>
               </div>
             </div>
           </div>
@@ -193,8 +187,8 @@
               </div>
               <div class="field">
                 <label>ไฟล์เดสก์ท็อป</label>
-                <input class="input" type="file" id="desktopFileInput" />
-                <div class="hint">ตัวอย่าง: .zip, .exe, .dmg, ฯลฯ</div>
+                <input class="input" type="file" id="desktopFileInput" accept=".exe,.msi,.zip,.rar,.7z,.dmg,.pkg,.bin" />
+                <div class="hint">ตัวอย่าง: .zip, .exe, .dmg ฯลฯ (จำกัด 5 MB)</div>
               </div>
             </div>
             <div class="stack">
@@ -206,7 +200,7 @@
               <div class="field">
                 <label>ไฟล์มือถือ (ไม่จำเป็น)</label>
                 <input class="input" type="file" id="mobileFileInput" accept=".apk,.aab" />
-                <div class="hint">หากไม่ได้ใส่ไฟล์มือถือ ปุ่มดาวน์โหลดบนมือถือจะเป็นสีเทา</div>
+                <div class="hint">ถ้าไม่ใส่ไฟล์มือถือ ปุ่มดาวน์โหลดบนมือถือจะเป็นสีเทา (จำกัด 5 MB)</div>
               </div>
             </div>
           </div>
@@ -214,11 +208,11 @@
       </div>
 
       <div class="row">
-        <button class="btn" data-nav="list">ยกเลิก</button>
+        <button type="button" class="btn" data-nav="list">ยกเลิก</button>
         <div class="spacer"></div>
-        <button class="btn btn-primary" id="submitBtn">ตกลงอัปโหลด</button>
+        <button type="button" class="btn btn-primary" id="submitBtn">ตกลงอัปโหลด</button>
       </div>
-      <p class="note">หลังอัปโหลด เสียบบนเครื่องอื่นจะไม่เห็นข้อมูลของคุณจนกว่าจะมีเซิร์ฟเวอร์จริง โค้ดนี้เก็บข้อมูลในเบราว์เซอร์ของคุณ (localStorage)</p>
+      <p class="note">ข้อมูลถูกเก็บในเบราว์เซอร์ของคุณ (localStorage) เพื่อให้ไม่หายหลังรีเฟรช — หากต้องการให้ทุกคนเห็น จำเป็นต้องมีเซิร์ฟเวอร์จริง</p>
     </section>
 
     <!-- หน้า รายการดาวน์โหลด -->
@@ -236,7 +230,7 @@
           <option>เครื่องมือพัฒนา</option>
           <option>อื่นๆ</option>
         </select>
-        <button class="btn" id="clearFilter">ล้างการค้นหา</button>
+        <button type="button" class="btn" id="clearFilter">ล้างการค้นหา</button>
       </div>
 
       <div class="list" id="appList"></div>
@@ -250,11 +244,11 @@
             <p id="detailDesc" style="margin-top:8px"></p>
             <div class="divider"></div>
             <div class="row">
-              <button class="btn" id="downloadPcBtn">ดาวน์โหลดเวอร์ชั่น PC</button>
-              <button class="btn" id="downloadApkBtn">ดาวน์โหลดเวอร์ชั่น APK</button>
+              <button type="button" class="btn" id="downloadPcBtn">ดาวน์โหลดเวอร์ชั่น PC</button>
+              <button type="button" class="btn" id="downloadApkBtn">ดาวน์โหลดเวอร์ชั่น APK</button>
               <span class="pill" id="deviceHint"></span>
               <div class="spacer"></div>
-              <button class="btn btn-danger" id="deleteBtn">ลบแอพนี้ (เฉพาะข้อมูลของคุณ)</button>
+              <button type="button" class="btn btn-danger" id="deleteBtn">ลบแอพนี้ (เฉพาะข้อมูลของคุณ)</button>
             </div>
             <p class="note">ปุ่มจะเป็นสีเทาเมื่อไม่มีไฟล์สำหรับแพลตฟอร์มนั้นๆ</p>
           </div>
@@ -264,7 +258,7 @@
   </main>
 
   <footer>
-    สร้างด้วย HTML/CSS/JS หน้าเดียว — เพื่อเดโมการทำงานจริง จำเป็นต้องมีเซิร์ฟเวอร์รองรับไฟล์อัปโหลด
+    สร้างด้วย HTML/CSS/JS หน้าเดียว — เดโมอัปโหลดเก็บไว้ใน localStorage เพื่อให้ข้อมูลอยู่หลังรีเฟรช
   </footer>
 
   <script>
@@ -277,7 +271,7 @@
     const device = isMobile() ? 'mobile' : 'desktop';
     qs('#deviceLabel').textContent = isMobile() ? 'มือถือ/แท็บเล็ต' : 'เดสก์ท็อป/แลปท็อป';
 
-    const storageKey = 'community_apps_v1';
+    const storageKey = 'community_apps_v2';
 
     const readStore = () => {
       try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); }
@@ -287,14 +281,19 @@
       localStorage.setItem(storageKey, JSON.stringify(apps));
       qs('#countLabel').textContent = String(apps.length);
     };
-
     writeStore(readStore()); // init count
 
-    const toDataUrl = (file) => new Promise((resolve, reject) => {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+    const toDataUrlSafe = (file) => new Promise((resolve) => {
       if (!file) return resolve(null);
+      if (file.size > MAX_FILE_SIZE) {
+        resolve({ error: 'ไฟล์ใหญ่เกิน 5 MB', dataUrl: null });
+        return;
+      }
       const fr = new FileReader();
-      fr.onload = () => resolve(fr.result);
-      fr.onerror = reject;
+      fr.onload = () => resolve({ error: null, dataUrl: fr.result });
+      fr.onerror = () => resolve({ error: 'อ่านไฟล์ล้มเหลว', dataUrl: null });
       fr.readAsDataURL(file);
     });
 
@@ -305,18 +304,15 @@
     };
 
     const navigate = (to) => {
-      // show/hide sections
       [$home, $upload, $list].forEach(s => s.hidden = true);
       if (to === 'upload') $upload.hidden = false;
       else if (to === 'list') $list.hidden = false;
       else $home.hidden = false;
-      // update hash
       location.hash = to;
     };
-
     qsa('[data-nav]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.nav)));
 
-    // --------- Upload form handlers ---------
+    // --------- Upload form refs ---------
     const $profileInput = qs('#profileInput');
     const $avatarPreview = qs('#avatarPreview');
     const $nameInput = qs('#nameInput');
@@ -328,64 +324,108 @@
     const $mobileFileInput = qs('#mobileFileInput');
     const $submitBtn = qs('#submitBtn');
 
+    let uploading = false;
+
     $profileInput.addEventListener('change', async () => {
       const file = $profileInput.files?.[0];
-      const url = await toDataUrl(file);
-      if (url) {
-        $avatarPreview.innerHTML = `<img src="${url}" alt="avatar" />`;
+      const res = await toDataUrlSafe(file);
+      if (res?.dataUrl) {
+        $avatarPreview.innerHTML = `<img src="${res.dataUrl}" alt="avatar" />`;
       } else {
         $avatarPreview.textContent = 'โปรไฟล์';
+        if (res?.error) alert('รูปโปรไฟล์: ' + res.error);
       }
     });
 
-    $submitBtn.addEventListener('click', async () => {
-      // validations
+    const validateInputs = () => {
       const name = $nameInput.value.trim();
       const category = $categoryInput.value.trim();
-      if (!name) { alert('กรุณาใส่ชื่อแอพ'); return; }
-      if (!category) { alert('กรุณาเลือกประเภทแอพ/เกม'); return; }
-
-      const profileUrl = await toDataUrl($profileInput.files?.[0]);
-
+      if (!name) return 'กรุณาใส่ชื่อแอพ';
+      if (!category) return 'กรุณาเลือกประเภทแอพ/เกม';
       const desktopFile = $desktopFileInput.files?.[0] || null;
       const mobileFile = $mobileFileInput.files?.[0] || null;
 
-      const desktopFileUrl = await toDataUrl(desktopFile);
-      const mobileFileUrl = await toDataUrl(mobileFile);
+      if (desktopFile && desktopFile.size > MAX_FILE_SIZE)
+        return 'ไฟล์เดสก์ท็อปใหญ่เกิน 5 MB';
+      if (mobileFile && mobileFile.size > MAX_FILE_SIZE)
+        return 'ไฟล์มือถือใหญ่เกิน 5 MB';
 
-      const app = {
-        id: 'app_' + Date.now(),
-        name,
-        category,
-        description: $descInput.value.trim(),
-        profileUrl,
-        desktop: {
-          version: ($desktopVerInput.value || '').trim(),
-          fileName: desktopFile?.name || '',
-          fileExt: extFromName(desktopFile?.name || ''),
-          dataUrl: desktopFileUrl // demo-only; in production use server URL
-        },
-        mobile: {
-          version: ($mobileVerInput.value || '').trim(),
-          fileName: mobileFile?.name || '',
-          fileExt: extFromName(mobileFile?.name || ''),
-          dataUrl: mobileFileUrl // demo-only
-        },
-        createdAt: new Date().toISOString()
-      };
+      const mobileExt = extFromName(mobileFile?.name || '');
+      if (mobileFile && !(mobileExt === 'apk' || mobileExt === 'aab'))
+        return 'ไฟล์มือถือต้องเป็น .apk หรือ .aab';
+      return null;
+    };
 
-      const apps = readStore();
-      apps.unshift(app);
-      writeStore(apps);
+    const safeDisable = (el, state) => {
+      el.disabled = state;
+      el.classList.toggle('disabled', state);
+      el.textContent = state ? 'กำลังอัปโหลด...' : 'ตกลงอัปโหลด';
+    };
 
-      // reset form
-      [$nameInput, $descInput, $desktopVerInput, $mobileVerInput].forEach(i => i.value = '');
-      $profileInput.value = ''; $desktopFileInput.value = ''; $mobileFileInput.value = '';
-      $avatarPreview.textContent = 'โปรไฟล์';
+    $submitBtn.addEventListener('click', async () => {
+      if (uploading) return;
+      const msg = validateInputs();
+      if (msg) { alert(msg); return; }
 
-      alert('อัปโหลดสำเร็จ');
-      renderList();
-      navigate('list');
+      try {
+        uploading = true;
+        safeDisable($submitBtn, true);
+
+        const name = $nameInput.value.trim();
+        const category = $categoryInput.value.trim();
+        const description = $descInput.value.trim();
+
+        const profileRes = await toDataUrlSafe($profileInput.files?.[0]);
+        if (profileRes?.error) throw new Error('รูปโปรไฟล์: ' + profileRes.error);
+
+        const desktopFile = $desktopFileInput.files?.[0] || null;
+        const mobileFile = $mobileFileInput.files?.[0] || null;
+
+        const desktopRes = await toDataUrlSafe(desktopFile);
+        if (desktopFile && desktopRes?.error) throw new Error('ไฟล์เดสก์ท็อป: ' + desktopRes.error);
+
+        const mobileRes = await toDataUrlSafe(mobileFile);
+        if (mobileFile && mobileRes?.error) throw new Error('ไฟล์มือถือ: ' + mobileRes.error);
+
+        const app = {
+          id: 'app_' + Date.now(),
+          name, category, description,
+          profileUrl: profileRes?.dataUrl || null,
+          desktop: {
+            version: ($desktopVerInput.value || '').trim(),
+            fileName: desktopFile?.name || '',
+            fileExt: extFromName(desktopFile?.name || ''),
+            // เก็บเป็น dataURL เพื่อ persistence หลังรีเฟรช
+            dataUrl: desktopRes?.dataUrl || null
+          },
+          mobile: {
+            version: ($mobileVerInput.value || '').trim(),
+            fileName: mobileFile?.name || '',
+            fileExt: extFromName(mobileFile?.name || ''),
+            dataUrl: mobileRes?.dataUrl || null
+          },
+          createdAt: new Date().toISOString()
+        };
+
+        const apps = readStore();
+        apps.unshift(app);
+        writeStore(apps);
+
+        // reset form
+        [$nameInput, $descInput, $desktopVerInput, $mobileVerInput].forEach(i => i.value = '');
+        $categoryInput.value = '';
+        $profileInput.value = ''; $desktopFileInput.value = ''; $mobileFileInput.value = '';
+        $avatarPreview.textContent = 'โปรไฟล์';
+
+        alert('อัปโหลดสำเร็จ');
+        renderList();
+        navigate('list');
+      } catch (err) {
+        alert('อัปโหลดไม่สำเร็จ: ' + (err?.message || 'ไม่ทราบสาเหตุ'));
+      } finally {
+        uploading = false;
+        safeDisable($submitBtn, false);
+      }
     });
 
     // --------- List rendering ---------
@@ -406,7 +446,7 @@
         const matchKw =
           !kw ||
           a.name.toLowerCase().includes(kw) ||
-          a.description.toLowerCase().includes(kw) ||
+          (a.description || '').toLowerCase().includes(kw) ||
           a.category.toLowerCase().includes(kw);
         const matchCat = !cat || a.category === cat;
         return matchKw && matchCat;
@@ -438,16 +478,14 @@
               <div class="row" style="margin-top:8px">
                 ${renderDownloadPair(app)}
                 <div class="spacer"></div>
-                <button class="btn" data-view="${app.id}">ดูรายละเอียด</button>
+                <button type="button" class="btn" data-view="${app.id}">ดูรายละเอียด</button>
               </div>
             </div>
           </div>
         `;
       }).join('');
 
-      // bind detail buttons
       qsa('[data-view]').forEach(btn => btn.addEventListener('click', () => showDetail(btn.dataset.view)));
-      // bind quick download buttons in list
       qsa('[data-dl]').forEach(btn => btn.addEventListener('click', onDownloadClick));
     };
 
@@ -455,23 +493,10 @@
       const pcAvailable = !!app.desktop.dataUrl;
       const apkAvailable = !!app.mobile.dataUrl;
 
-      const pcLabel = 'ดาวน์โหลดเวอร์ชั่น PC';
-      const apkLabel = 'ดาวน์โหลดเวอร์ชั่น APK';
+      const pcBtn = `<button type="button" class="btn ${pcAvailable ? '' : 'disabled'}" data-dl="pc" data-id="${app.id}" ${pcAvailable ? '' : 'disabled'}>ดาวน์โหลดเวอร์ชั่น PC</button>`;
+      const apkBtn = `<button type="button" class="btn ${apkAvailable ? '' : 'disabled'}" data-dl="apk" data-id="${app.id}" ${apkAvailable ? '' : 'disabled'}>ดาวน์โหลดเวอร์ชั่น APK</button>`;
 
-      const pcBtn = `<button class="btn ${pcAvailable ? '' : 'disabled'}" data-dl="pc" data-id="${app.id}" ${pcAvailable ? '' : 'disabled'}>${pcLabel}</button>`;
-      const apkBtn = `<button class="btn ${apkAvailable ? '' : 'disabled'}" data-dl="apk" data-id="${app.id}" ${apkAvailable ? '' : 'disabled'}>${apkBtnText(app)}</button>`;
-
-      // auto-highlight based on device
-      if (device === 'desktop') {
-        return `${pcBtn} ${apkBtn}`;
-      } else {
-        return `${apkBtn} ${pcBtn}`;
-      }
-    };
-
-    const apkBtnText = (app) => {
-      // keep label constant, version shown in meta
-      return 'ดาวน์โหลดเวอร์ชั่น APK';
+      return device === 'desktop' ? `${pcBtn} ${apkBtn}` : `${apkBtn} ${pcBtn}`;
     };
 
     const onDownloadClick = (e) => {
@@ -491,7 +516,6 @@
         filename = app.mobile.fileName || `${app.name}-APK.${app.mobile.fileExt || 'apk'}`;
       }
 
-      // trigger browser download
       const a = document.createElement('a');
       a.href = blobUrl;
       a.download = filename;
@@ -500,7 +524,7 @@
       a.remove();
     };
 
-    // Detail panel
+    // --------- Detail panel ---------
     const $detailPanel = qs('#detailPanel');
     const $detailCover = qs('#detailCover');
     const $detailTitle = qs('#detailTitle');
@@ -517,12 +541,10 @@
       if (!app) { $detailPanel.hidden = true; return; }
       currentDetailId = id;
 
-      // cover
       $detailCover.innerHTML = app.profileUrl
         ? `<img src="${app.profileUrl}" alt="${app.name}"/>`
         : `<div style="display:grid;place-items:center;height:100%;color:#7f86a8">ไม่มีรูป</div>`;
 
-      // title + meta
       $detailTitle.textContent = app.name;
       const metaParts = [
         `ประเภท: ${app.category}`,
@@ -532,16 +554,13 @@
       $detailMeta.textContent = metaParts.join(' • ');
       $detailDesc.textContent = app.description || '— ไม่มีคำอธิบาย —';
 
-      // device hint
       $deviceHint.textContent = device === 'desktop'
         ? 'คุณใช้งานบนเดสก์ท็อป'
         : 'คุณใช้งานบนมือถือ/แท็บเล็ต';
 
-      // buttons enable/disable + labels
       setupDetailDownloadButtons(app);
 
       $detailPanel.hidden = false;
-      // scroll into view
       $detailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
@@ -573,7 +592,6 @@
         document.body.appendChild(a); a.click(); a.remove();
       };
 
-      // auto emphasize based on device
       if (device === 'desktop') {
         $downloadPcBtn.classList.add('btn-success');
         $downloadApkBtn.classList.remove('btn-success');
@@ -596,7 +614,7 @@
       alert('ลบสำเร็จ');
     });
 
-    // Search/filter
+    // --------- Search/filter ---------
     $searchInput.addEventListener('input', renderList);
     $filterCategory.addEventListener('change', renderList);
     $clearFilter.addEventListener('click', () => {

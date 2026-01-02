@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AppHub – อัปโหลดแอพ/โปรแกรม</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <div class="logo"></div>
+        <h1>AppHub – อัปโหลดแอพหรือโปรแกรม</h1>
+      </div>
+      <nav>
+        <a class="btn" href="/">รายการดาวน์โหลด</a>
+        <a class="btn primary" href="/upload.html">เลือกแอพ/โปรแกรม</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="card">
+      <h2 style="margin:0 0 12px;">อัปโหลดแอพหรือโปรแกรม</h2>
+      <div class="hint">กรอกข้อมูลให้ครบ โดย <strong>ประเภทแอพ/เกม</strong> จำเป็นต้องใส่, <strong>ไฟล์มือถือ</strong> ไม่ใส่ก็ได้</div>
+    </div>
+
+    <form id="uploadForm" class="card" enctype="multipart/form-data">
+      <div class="grid-2">
+        <div>
+          <label>โปรไฟล์แอพ (รูป)</label>
+          <input type="file" name="profile" accept="image/*" />
+          <div class="hint">ไม่บังคับ แต่แนะนำให้ใส่</div>
+        </div>
+        <div>
+          <label>ประเภทแอพ/เกม (จำเป็น)</label>
+          <input type="text" name="category" placeholder="เช่น เกม, เครื่องมือ, สื่อ, การศึกษา" required />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>ชื่อแอพ (จำเป็น)</label>
+          <input type="text" name="name" placeholder="เช่น Space Runner" required />
+        </div>
+        <div>
+          <label>คำอธิบาย (จำเป็น)</label>
+          <input type="text" name="description" placeholder="สรุปคุณสมบัติสั้นๆ ชัดเจน" required />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>ไฟล์แอพสำหรับเดสก์ท็อป (PC)</label>
+          <input type="file" name="desktopFile" />
+          <label style="margin-top:8px;">เวอร์ชั่นสำหรับเดสก์ท็อป</label>
+          <input type="text" name="desktopVersion" placeholder="เช่น 1.0.0" />
+          <div class="hint">ถ้าอัปสำหรับคอม ปุ่มดาวน์โหลดจะพร้อมใช้งานบนคอมพิวเตอร์</div>
+        </div>
+        <div>
+          <label>ไฟล์แอพสำหรับมือถือ (APK)</label>
+          <input type="file" name="mobileFile" />
+          <label style="margin-top:8px;">เวอร์ชั่นสำหรับมือถือ</label>
+          <input type="text" name="mobileVersion" placeholder="เช่น 1.0.0" />
+          <div class="hint">มือถือไม่จำเป็นต้องใส่ หากไม่มี ปุ่มบนมือถือจะเป็นสีเทา</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn primary" type="submit">ตกลงและอัปโหลด</button>
+      </div>
+      <div class="hint">หลังอัปโหลด แอพจะไปแสดงในหน้า “รายการดาวน์โหลด” และไม่หายแม้เปิดเว็บใหม่</div>
+      <div id="result" class="hint"></div>
+    </form>
+  </main>
+  <div class="footer">© <span id="year"></span> AppHub</div>
+
+  <script type="module" src="/js/upload.js"></script>
+</body>
+</html>

@@ -1,46 +1,618 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AppHub – รายการดาวน์โหลด</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ศูนย์อัปโหลด/ดาวน์โหลดแอพ</title>
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171a2b;
+      --text: #e5e7ef;
+      --muted: #a9afc7;
+      --primary: #6ea0ff;
+      --primary-hover: #85afff;
+      --danger: #ff6e6e;
+      --success: #59d37d;
+      --warning: #f5c04e;
+      --border: #2a314a;
+      --gray: #3a415f;
+      --disabled: #666c86;
+    }
+    * { box-sizing: border-box }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg); color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    a { color: var(--primary); text-decoration: none }
+    a:hover { color: var(--primary-hover) }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(23,26,43,0.9); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1100px; margin: 0 auto; padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav h1 { font-size: 18px; margin: 0; color: var(--text) }
+    .spacer { flex: 1 }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--panel); color: var(--text); cursor: pointer; transition: .2s;
+    }
+    .btn:hover { background: #1e2237; }
+    .btn-primary { background: var(--primary); color: #0b1020; border-color: transparent; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-ghost { background: transparent; }
+    .btn-danger { background: var(--danger); color: #0b1020; border-color: transparent; }
+    .btn-success { background: var(--success); color: #0b1020; border-color: transparent; }
+    .btn-warning { background: var(--warning); color: #0b1020; border-color: transparent; }
+    .btn[disabled], .btn.disabled {
+      cursor: not-allowed; opacity: .6; background: var(--gray); color: #cfd5ee;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+    .panel {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-bottom: 16px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label { font-size: 14px; color: var(--muted); }
+    .input, textarea, select {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: #121527; color: var(--text);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .hint { font-size: 12px; color: var(--muted); }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .avatar {
+      width: 92px; height: 92px; border-radius: 12px; background: #0c0f1e;
+      border: 1px dashed var(--gray); display: grid; place-items: center; color: var(--muted);
+      overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .item {
+      display: grid; grid-template-columns: 96px 1fr; gap: 12px;
+      padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #14172a;
+    }
+    .item .cover {
+      width: 96px; height: 96px; border-radius: 12px; background: #0c0f1e;
+      border: 1px dashed var(--gray); overflow: hidden;
+    }
+    .item .cover img { width: 100%; height: 100%; object-fit: cover; }
+    .item h3 { margin: 0; font-size: 16px; }
+    .meta { font-size: 13px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+      padding: 6px 10px; border-radius: 20px; border: 1px solid var(--border); color: #c9cfee;
+      background: #101327;
+    }
+    .searchbar { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; }
+    @media (max-width: 700px) { .searchbar { grid-template-columns: 1fr; } }
+    .detail {
+      display: grid; grid-template-columns: 160px 1fr; gap: 16px;
+    }
+    @media (max-width: 700px) { .detail { grid-template-columns: 1fr; } }
+    .divider { border-top: 1px solid var(--border); margin: 12px 0; }
+    .note { font-size: 12px; color: var(--muted); }
+    footer { padding: 24px 16px; color: var(--muted); text-align: center; }
+    .pill { padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; }
+    .stack { display: flex; flex-direction: column; gap: 8px; }
+    .nowrap { white-space: nowrap; }
+  </style>
 </head>
 <body>
   <header>
-    <div class="bar">
-      <div class="brand">
-        <div class="logo"></div>
-        <h1>AppHub – ศูนย์อัปโหลดและดาวน์โหลด</h1>
-      </div>
-      <nav>
-        <a class="btn" href="/">รายการดาวน์โหลด</a>
-        <a class="btn primary" href="/upload.html">เลือกแอพ/โปรแกรม</a>
-      </nav>
+    <div class="nav">
+      <h1>ศูนย์แอพชุมชน</h1>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" data-nav="list">รายการดาวน์โหลด</button>
+      <button class="btn btn-primary" data-nav="upload">อัปโหลดแอพ/โปรแกรม</button>
     </div>
   </header>
+
   <main>
-    <div class="card">
-      <div class="searchbar">
-        <div>
-          <label>ค้นหา</label>
-          <input id="q" type="text" placeholder="พิมพ์ชื่อแอพหรือคำอธิบาย..." />
+    <!-- หน้าเลือก -->
+    <section id="home" class="panel">
+      <div class="grid-2">
+        <div class="stack">
+          <h2 style="margin:0">เริ่มต้น</h2>
+          <p>ด้านบนมีปุ่มให้เลือก “รายการดาวน์โหลด” หรือ “อัปโหลดแอพ/โปรแกรม”。คุณสามารถอัปโหลดไฟล์สำหรับเดสก์ท็อป (PC) หรือมือถือ (APK) และระบุโปรไฟล์, ชื่อ, คำอธิบาย, เวอร์ชั่น, ประเภทแอพ/เกม</p>
+          <div class="row">
+            <button class="btn btn-primary" data-nav="upload">เลือกอัปโหลด</button>
+            <button class="btn" data-nav="list">ไปหน้ารายการดาวน์โหลด</button>
+          </div>
+          <p class="note">ระบบจะปรับปุ่มดาวน์โหลดตามอุปกรณ์ที่คุณใช้อยู่ (PC/มือถือ) และปุ่มจะเป็นสีเทาเมื่อไม่มีไฟล์สำหรับแพลตฟอร์มนั้น</p>
         </div>
-        <div>
-          <label>ประเภทแอพ/เกม</label>
-          <select id="cat"><option value="">ทุกประเภท</option></select>
-        </div>
-        <div style="display:flex;align-items:flex-end;">
-          <button id="searchBtn" class="btn">ค้นหา</button>
+        <div class="stack">
+          <div class="badge">อุปกรณ์ของคุณ: <span id="deviceLabel">ตรวจสอบ...</span></div>
+          <div class="badge">จำนวนแอพในระบบ: <span id="countLabel">0</span></div>
+          <div class="badge">โหมดบันทึก: localStorage</div>
         </div>
       </div>
-      <div class="note" id="deviceNote">อุปกรณ์ของคุณ: ตรวจสอบ...</div>
-    </div>
+    </section>
 
-    <div id="list"></div>
+    <!-- หน้าอัปโหลด -->
+    <section id="upload" class="panel" hidden>
+      <h2 style="margin-top:0">อัปโหลดแอพหรือโปรแกรม</h2>
+
+      <div class="grid-2">
+        <!-- โปรไฟล์และข้อมูลหลัก -->
+        <div class="panel">
+          <h3 style="margin-top:0">โปรไฟล์แอพ</h3>
+          <div class="row">
+            <div class="avatar" id="avatarPreview">โปรไฟล์</div>
+            <div class="stack" style="flex:1">
+              <div class="field">
+                <label>รูปโปรไฟล์แอพ (PNG/JPG)</label>
+                <input class="input" type="file" id="profileInput" accept="image/*" />
+                <div class="hint">ไม่บังคับ แต่แนะนำให้ใส่เพื่อให้รายการดูน่าสนใจ</div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>ชื่อแอพ (จำเป็น)</label>
+                  <input class="input" type="text" id="nameInput" placeholder="เช่น: My Awesome App" />
+                </div>
+                <div class="field">
+                  <label>ประเภทแอพ/เกม (จำเป็น)</label>
+                  <select class="input" id="categoryInput">
+                    <option value="">-- เลือกประเภท --</option>
+                    <option>เกม</option>
+                    <option>ยูทิลิตี้</option>
+                    <option>การศึกษา</option>
+                    <option>มัลติมีเดีย</option>
+                    <option>เครื่องมือพัฒนา</option>
+                    <option>อื่นๆ</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label>คำอธิบาย</label>
+                <textarea id="descInput" placeholder="เล่าให้สั้น กระชับ ว่าทำอะไร มีจุดเด่นอะไร"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ไฟล์แพลตฟอร์ม -->
+        <div class="panel">
+          <h3 style="margin-top:0">ไฟล์แพลตฟอร์ม</h3>
+          <div class="grid-2">
+            <div class="stack">
+              <h4 style="margin:0">เดสก์ท็อป (PC)</h4>
+              <div class="field">
+                <label>เวอร์ชั่น PC</label>
+                <input class="input" type="text" id="desktopVerInput" placeholder="เช่น: 1.0.0" />
+              </div>
+              <div class="field">
+                <label>ไฟล์เดสก์ท็อป</label>
+                <input class="input" type="file" id="desktopFileInput" />
+                <div class="hint">ตัวอย่าง: .zip, .exe, .dmg, ฯลฯ</div>
+              </div>
+            </div>
+            <div class="stack">
+              <h4 style="margin:0">มือถือ (Android APK)</h4>
+              <div class="field">
+                <label>เวอร์ชั่น APK</label>
+                <input class="input" type="text" id="mobileVerInput" placeholder="เช่น: 1.0.0" />
+              </div>
+              <div class="field">
+                <label>ไฟล์มือถือ (ไม่จำเป็น)</label>
+                <input class="input" type="file" id="mobileFileInput" accept=".apk,.aab" />
+                <div class="hint">หากไม่ได้ใส่ไฟล์มือถือ ปุ่มดาวน์โหลดบนมือถือจะเป็นสีเทา</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" data-nav="list">ยกเลิก</button>
+        <div class="spacer"></div>
+        <button class="btn btn-primary" id="submitBtn">ตกลงอัปโหลด</button>
+      </div>
+      <p class="note">หลังอัปโหลด เสียบบนเครื่องอื่นจะไม่เห็นข้อมูลของคุณจนกว่าจะมีเซิร์ฟเวอร์จริง โค้ดนี้เก็บข้อมูลในเบราว์เซอร์ของคุณ (localStorage)</p>
+    </section>
+
+    <!-- หน้า รายการดาวน์โหลด -->
+    <section id="list" class="panel" hidden>
+      <h2 style="margin-top:0">รายการดาวน์โหลด</h2>
+
+      <div class="searchbar panel" style="padding:12px">
+        <input class="input" type="text" id="searchInput" placeholder="ค้นหาแอพ..." />
+        <select class="input" id="filterCategory">
+          <option value="">ทุกประเภท</option>
+          <option>เกม</option>
+          <option>ยูทิลิตี้</option>
+          <option>การศึกษา</option>
+          <option>มัลติมีเดีย</option>
+          <option>เครื่องมือพัฒนา</option>
+          <option>อื่นๆ</option>
+        </select>
+        <button class="btn" id="clearFilter">ล้างการค้นหา</button>
+      </div>
+
+      <div class="list" id="appList"></div>
+
+      <div class="panel" id="detailPanel" hidden>
+        <div class="detail">
+          <div class="cover" id="detailCover"></div>
+          <div>
+            <h3 id="detailTitle"></h3>
+            <div class="meta" id="detailMeta"></div>
+            <p id="detailDesc" style="margin-top:8px"></p>
+            <div class="divider"></div>
+            <div class="row">
+              <button class="btn" id="downloadPcBtn">ดาวน์โหลดเวอร์ชั่น PC</button>
+              <button class="btn" id="downloadApkBtn">ดาวน์โหลดเวอร์ชั่น APK</button>
+              <span class="pill" id="deviceHint"></span>
+              <div class="spacer"></div>
+              <button class="btn btn-danger" id="deleteBtn">ลบแอพนี้ (เฉพาะข้อมูลของคุณ)</button>
+            </div>
+            <p class="note">ปุ่มจะเป็นสีเทาเมื่อไม่มีไฟล์สำหรับแพลตฟอร์มนั้นๆ</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  <div class="footer">© <span id="year"></span> AppHub</div>
 
-  <script type="module" src="/js/index.js"></script>
+  <footer>
+    สร้างด้วย HTML/CSS/JS หน้าเดียว — เพื่อเดโมการทำงานจริง จำเป็นต้องมีเซิร์ฟเวอร์รองรับไฟล์อัปโหลด
+  </footer>
+
+  <script>
+    // --------- Utilities ---------
+    const qs = (sel, el = document) => el.querySelector(sel);
+    const qsa = (sel, el = document) => [...el.querySelectorAll(sel)];
+    const $home = qs('#home'), $upload = qs('#upload'), $list = qs('#list');
+
+    const isMobile = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const device = isMobile() ? 'mobile' : 'desktop';
+    qs('#deviceLabel').textContent = isMobile() ? 'มือถือ/แท็บเล็ต' : 'เดสก์ท็อป/แลปท็อป';
+
+    const storageKey = 'community_apps_v1';
+
+    const readStore = () => {
+      try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); }
+      catch { return []; }
+    };
+    const writeStore = (apps) => {
+      localStorage.setItem(storageKey, JSON.stringify(apps));
+      qs('#countLabel').textContent = String(apps.length);
+    };
+
+    writeStore(readStore()); // init count
+
+    const toDataUrl = (file) => new Promise((resolve, reject) => {
+      if (!file) return resolve(null);
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+
+    const extFromName = (name) => {
+      if (!name) return null;
+      const idx = name.lastIndexOf('.');
+      return idx >= 0 ? name.substring(idx + 1).toLowerCase() : null;
+    };
+
+    const navigate = (to) => {
+      // show/hide sections
+      [$home, $upload, $list].forEach(s => s.hidden = true);
+      if (to === 'upload') $upload.hidden = false;
+      else if (to === 'list') $list.hidden = false;
+      else $home.hidden = false;
+      // update hash
+      location.hash = to;
+    };
+
+    qsa('[data-nav]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.nav)));
+
+    // --------- Upload form handlers ---------
+    const $profileInput = qs('#profileInput');
+    const $avatarPreview = qs('#avatarPreview');
+    const $nameInput = qs('#nameInput');
+    const $categoryInput = qs('#categoryInput');
+    const $descInput = qs('#descInput');
+    const $desktopVerInput = qs('#desktopVerInput');
+    const $desktopFileInput = qs('#desktopFileInput');
+    const $mobileVerInput = qs('#mobileVerInput');
+    const $mobileFileInput = qs('#mobileFileInput');
+    const $submitBtn = qs('#submitBtn');
+
+    $profileInput.addEventListener('change', async () => {
+      const file = $profileInput.files?.[0];
+      const url = await toDataUrl(file);
+      if (url) {
+        $avatarPreview.innerHTML = `<img src="${url}" alt="avatar" />`;
+      } else {
+        $avatarPreview.textContent = 'โปรไฟล์';
+      }
+    });
+
+    $submitBtn.addEventListener('click', async () => {
+      // validations
+      const name = $nameInput.value.trim();
+      const category = $categoryInput.value.trim();
+      if (!name) { alert('กรุณาใส่ชื่อแอพ'); return; }
+      if (!category) { alert('กรุณาเลือกประเภทแอพ/เกม'); return; }
+
+      const profileUrl = await toDataUrl($profileInput.files?.[0]);
+
+      const desktopFile = $desktopFileInput.files?.[0] || null;
+      const mobileFile = $mobileFileInput.files?.[0] || null;
+
+      const desktopFileUrl = await toDataUrl(desktopFile);
+      const mobileFileUrl = await toDataUrl(mobileFile);
+
+      const app = {
+        id: 'app_' + Date.now(),
+        name,
+        category,
+        description: $descInput.value.trim(),
+        profileUrl,
+        desktop: {
+          version: ($desktopVerInput.value || '').trim(),
+          fileName: desktopFile?.name || '',
+          fileExt: extFromName(desktopFile?.name || ''),
+          dataUrl: desktopFileUrl // demo-only; in production use server URL
+        },
+        mobile: {
+          version: ($mobileVerInput.value || '').trim(),
+          fileName: mobileFile?.name || '',
+          fileExt: extFromName(mobileFile?.name || ''),
+          dataUrl: mobileFileUrl // demo-only
+        },
+        createdAt: new Date().toISOString()
+      };
+
+      const apps = readStore();
+      apps.unshift(app);
+      writeStore(apps);
+
+      // reset form
+      [$nameInput, $descInput, $desktopVerInput, $mobileVerInput].forEach(i => i.value = '');
+      $profileInput.value = ''; $desktopFileInput.value = ''; $mobileFileInput.value = '';
+      $avatarPreview.textContent = 'โปรไฟล์';
+
+      alert('อัปโหลดสำเร็จ');
+      renderList();
+      navigate('list');
+    });
+
+    // --------- List rendering ---------
+    const $appList = qs('#appList');
+    const $searchInput = qs('#searchInput');
+    const $filterCategory = qs('#filterCategory');
+    const $clearFilter = qs('#clearFilter');
+
+    let currentDetailId = null;
+
+    const renderList = () => {
+      const apps = readStore();
+      qs('#countLabel').textContent = String(apps.length);
+
+      const kw = ($searchInput.value || '').toLowerCase();
+      const cat = ($filterCategory.value || '');
+      const filtered = apps.filter(a => {
+        const matchKw =
+          !kw ||
+          a.name.toLowerCase().includes(kw) ||
+          a.description.toLowerCase().includes(kw) ||
+          a.category.toLowerCase().includes(kw);
+        const matchCat = !cat || a.category === cat;
+        return matchKw && matchCat;
+      });
+
+      if (!filtered.length) {
+        $appList.innerHTML = `<div class="panel">ไม่พบบันทึกที่ตรงกับการค้นหา/ประเภท</div>`;
+        qs('#detailPanel').hidden = true;
+        return;
+      }
+
+      $appList.innerHTML = filtered.map(app => {
+        const cover = app.profileUrl
+          ? `<img src="${app.profileUrl}" alt="${app.name}"/>`
+          : `<div style="display:grid;place-items:center;height:100%;color:#7f86a8">ไม่มีรูป</div>`;
+        const pcVer = app.desktop.version ? `PC v${app.desktop.version}` : 'PC—ไม่มีเวอร์ชั่น';
+        const apkVer = app.mobile.version ? `APK v${app.mobile.version}` : 'APK—ไม่มีเวอร์ชั่น';
+        return `
+          <div class="item" data-id="${app.id}">
+            <div class="cover">${cover}</div>
+            <div>
+              <h3>${app.name}</h3>
+              <div class="meta">
+                <span class="badge">ประเภท: ${app.category}</span>
+                <span class="badge">${pcVer}</span>
+                <span class="badge">${apkVer}</span>
+              </div>
+              <p style="margin:8px 0 0; color:#cfd5ee; font-size:13px;">${app.description || '— ไม่มีคำอธิบาย —'}</p>
+              <div class="row" style="margin-top:8px">
+                ${renderDownloadPair(app)}
+                <div class="spacer"></div>
+                <button class="btn" data-view="${app.id}">ดูรายละเอียด</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // bind detail buttons
+      qsa('[data-view]').forEach(btn => btn.addEventListener('click', () => showDetail(btn.dataset.view)));
+      // bind quick download buttons in list
+      qsa('[data-dl]').forEach(btn => btn.addEventListener('click', onDownloadClick));
+    };
+
+    const renderDownloadPair = (app) => {
+      const pcAvailable = !!app.desktop.dataUrl;
+      const apkAvailable = !!app.mobile.dataUrl;
+
+      const pcLabel = 'ดาวน์โหลดเวอร์ชั่น PC';
+      const apkLabel = 'ดาวน์โหลดเวอร์ชั่น APK';
+
+      const pcBtn = `<button class="btn ${pcAvailable ? '' : 'disabled'}" data-dl="pc" data-id="${app.id}" ${pcAvailable ? '' : 'disabled'}>${pcLabel}</button>`;
+      const apkBtn = `<button class="btn ${apkAvailable ? '' : 'disabled'}" data-dl="apk" data-id="${app.id}" ${apkAvailable ? '' : 'disabled'}>${apkBtnText(app)}</button>`;
+
+      // auto-highlight based on device
+      if (device === 'desktop') {
+        return `${pcBtn} ${apkBtn}`;
+      } else {
+        return `${apkBtn} ${pcBtn}`;
+      }
+    };
+
+    const apkBtnText = (app) => {
+      // keep label constant, version shown in meta
+      return 'ดาวน์โหลดเวอร์ชั่น APK';
+    };
+
+    const onDownloadClick = (e) => {
+      const id = e.currentTarget.dataset.id;
+      const kind = e.currentTarget.dataset.dl; // 'pc' or 'apk'
+      const app = readStore().find(a => a.id === id);
+      if (!app) return;
+
+      let blobUrl = null, filename = '';
+      if (kind === 'pc') {
+        if (!app.desktop.dataUrl) return;
+        blobUrl = app.desktop.dataUrl;
+        filename = app.desktop.fileName || `${app.name}-PC.${app.desktop.fileExt || 'bin'}`;
+      } else {
+        if (!app.mobile.dataUrl) return;
+        blobUrl = app.mobile.dataUrl;
+        filename = app.mobile.fileName || `${app.name}-APK.${app.mobile.fileExt || 'apk'}`;
+      }
+
+      // trigger browser download
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+
+    // Detail panel
+    const $detailPanel = qs('#detailPanel');
+    const $detailCover = qs('#detailCover');
+    const $detailTitle = qs('#detailTitle');
+    const $detailMeta = qs('#detailMeta');
+    const $detailDesc = qs('#detailDesc');
+    const $downloadPcBtn = qs('#downloadPcBtn');
+    const $downloadApkBtn = qs('#downloadApkBtn');
+    const $deviceHint = qs('#deviceHint');
+    const $deleteBtn = qs('#deleteBtn');
+
+    const showDetail = (id) => {
+      const apps = readStore();
+      const app = apps.find(a => a.id === id);
+      if (!app) { $detailPanel.hidden = true; return; }
+      currentDetailId = id;
+
+      // cover
+      $detailCover.innerHTML = app.profileUrl
+        ? `<img src="${app.profileUrl}" alt="${app.name}"/>`
+        : `<div style="display:grid;place-items:center;height:100%;color:#7f86a8">ไม่มีรูป</div>`;
+
+      // title + meta
+      $detailTitle.textContent = app.name;
+      const metaParts = [
+        `ประเภท: ${app.category}`,
+        `PC: ${app.desktop.version || 'ไม่มี'}`,
+        `APK: ${app.mobile.version || 'ไม่มี'}`
+      ];
+      $detailMeta.textContent = metaParts.join(' • ');
+      $detailDesc.textContent = app.description || '— ไม่มีคำอธิบาย —';
+
+      // device hint
+      $deviceHint.textContent = device === 'desktop'
+        ? 'คุณใช้งานบนเดสก์ท็อป'
+        : 'คุณใช้งานบนมือถือ/แท็บเล็ต';
+
+      // buttons enable/disable + labels
+      setupDetailDownloadButtons(app);
+
+      $detailPanel.hidden = false;
+      // scroll into view
+      $detailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const setupDetailDownloadButtons = (app) => {
+      const pcAvail = !!app.desktop.dataUrl;
+      const apkAvail = !!app.mobile.dataUrl;
+
+      $downloadPcBtn.textContent = 'ดาวน์โหลดเวอร์ชั่น PC';
+      $downloadApkBtn.textContent = 'ดาวน์โหลดเวอร์ชั่น APK';
+
+      $downloadPcBtn.disabled = !pcAvail;
+      $downloadApkBtn.disabled = !apkAvail;
+
+      $downloadPcBtn.classList.toggle('disabled', !pcAvail);
+      $downloadApkBtn.classList.toggle('disabled', !apkAvail);
+
+      $downloadPcBtn.onclick = () => {
+        if (!pcAvail) return;
+        const a = document.createElement('a');
+        a.href = app.desktop.dataUrl;
+        a.download = app.desktop.fileName || `${app.name}-PC.${app.desktop.fileExt || 'bin'}`;
+        document.body.appendChild(a); a.click(); a.remove();
+      };
+      $downloadApkBtn.onclick = () => {
+        if (!apkAvail) return;
+        const a = document.createElement('a');
+        a.href = app.mobile.dataUrl;
+        a.download = app.mobile.fileName || `${app.name}-APK.${app.mobile.fileExt || 'apk'}`;
+        document.body.appendChild(a); a.click(); a.remove();
+      };
+
+      // auto emphasize based on device
+      if (device === 'desktop') {
+        $downloadPcBtn.classList.add('btn-success');
+        $downloadApkBtn.classList.remove('btn-success');
+      } else {
+        $downloadApkBtn.classList.add('btn-success');
+        $downloadPcBtn.classList.remove('btn-success');
+      }
+    };
+
+    $deleteBtn.addEventListener('click', () => {
+      if (!currentDetailId) return;
+      const apps = readStore();
+      const idx = apps.findIndex(a => a.id === currentDetailId);
+      if (idx < 0) return;
+      if (!confirm('ลบแอพนี้ออกจากรายการของเบราว์เซอร์คุณ?')) return;
+      apps.splice(idx, 1);
+      writeStore(apps);
+      renderList();
+      $detailPanel.hidden = true;
+      alert('ลบสำเร็จ');
+    });
+
+    // Search/filter
+    $searchInput.addEventListener('input', renderList);
+    $filterCategory.addEventListener('change', renderList);
+    $clearFilter.addEventListener('click', () => {
+      $searchInput.value = '';
+      $filterCategory.value = '';
+      renderList();
+    });
+
+    // --------- Routing ---------
+    const applyRoute = () => {
+      const h = (location.hash || '#home').replace('#', '');
+      navigate(h);
+      renderList();
+    };
+    window.addEventListener('hashchange', applyRoute);
+    applyRoute();
+  </script>
 </body>
 </html>

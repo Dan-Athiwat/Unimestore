@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ศูนย์อัปโหลด/ดาวน์โหลดแอพ (รองรับ 1GB)</title>
+  <title>ศูนย์อัปโหลด/ดาวน์โหลดแอพ (แก้ 405 อัตโนมัติ)</title>
   <style>
     :root { --bg:#0f1220; --panel:#171a2b; --text:#e5e7ef; --muted:#a9afc7;
       --primary:#6ea0ff; --primary-hover:#85afff; --danger:#ff6e6e; --success:#59d37d;
@@ -25,15 +25,14 @@
     main{max-width:1100px;margin:0 auto;padding:20px 16px}
     .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    @media (max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+    @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
     .field{display:flex;flex-direction:column;gap:8px}
     .field label{font-size:14px;color:var(--muted)}
     .input,textarea,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#121527;color:var(--text)}
     textarea{min-height:100px;resize:vertical}
     .hint{font-size:12px;color:var(--muted)}
     .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-    .avatar{width:92px;height:92px;border-radius:12px;background:#0c0f1e;border:1px dashed var(--gray);display:grid;place-items:center;color:var(--muted);overflow:hidden}
+    .avatar{width:92px;height:92px;border-radius:12px;background:#0c0f1e;border:1px dashed var(--gray);display:grid;place-items:center;color:#cfd5ee;overflow:hidden}
     .avatar img{width:100%;height:100%;object-fit:cover}
     .list{display:grid;grid-template-columns:1fr;gap:12px}
     .item{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:12px;border-radius:12px;border:1px solid var(--border);background:#14172a}
@@ -48,19 +47,20 @@
     @media (max-width:700px){.detail{grid-template-columns:1fr}}
     .divider{border-top:1px solid var(--border);margin:12px 0}
     .note{font-size:12px;color:var(--muted)}
-    footer{padding:24px 16px;color:var(--muted);text-align:center}
+    footer{padding:24px 16px;color:#a9afc7;text-align:center}
     .pill{padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px}
     .stack{display:flex;flex-direction:column;gap:8px}
     .progress-wrap{display:flex;flex-direction:column;gap:6px}
     .progress-bar{height:10px;background:#0c0f1e;border:1px solid var(--border);border-radius:8px;overflow:hidden}
     .progress-bar > div{height:100%;background:var(--success);width:0%}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;color:#cfd5ee}
+    .warn{color:#f5c04e}
   </style>
 </head>
 <body>
   <header>
     <div class="nav">
-      <h1>ศูนย์แอพชุมชน (อัปโหลดถึง 1GB)</h1>
+      <h1>ศูนย์แอพชุมชน (อัปโหลดถึง 1GB — แก้ 405)</h1>
       <div class="spacer"></div>
       <button type="button" class="btn btn-ghost" data-nav="list">รายการดาวน์โหลด</button>
       <button type="button" class="btn btn-primary" data-nav="upload">อัปโหลดแอพ/โปรแกรม</button>
@@ -71,32 +71,42 @@
     <section id="home" class="panel">
       <div class="grid-2">
         <div class="stack">
-          <h2 style="margin:0">เริ่มต้น</h2>
-          <p>โค้ดนี้รองรับอัปโหลดไฟล์ใหญ่ถึง 1GB ด้วยการอัปโหลดแบบแบ่งชิ้นไปยังเซิร์ฟเวอร์จริง พร้อมบันทึกเมตาดาต้าใน localStorage และปุ่มดาวน์โหลดอัจฉริยะตามอุปกรณ์ (PC/มือถือ)</p>
+          <h2 style="margin:0">สรุปการทำงาน</h2>
+          <p>รองรับอัปโหลดไฟล์ใหญ่ถึง 1GB ด้วยการแบ่งชิ้น (chunk) ส่งไปยังเซิร์ฟเวอร์ และแก้ปัญหา HTTP 405 โดยสลับเมธอดอัตโนมัติระหว่าง POST/PUT ตามที่เซิร์ฟเวอร์ยอมรับ</p>
           <div class="row">
             <button type="button" class="btn btn-primary" data-nav="upload">เลือกอัปโหลด</button>
             <button type="button" class="btn" data-nav="list">ไปหน้ารายการดาวน์โหลด</button>
           </div>
-          <p class="note">ต้องมี API ฝั่งเซิร์ฟเวอร์สำหรับ /upload/init, /upload/chunk, /upload/complete เพื่อใช้งานอัปโหลด 1GB ได้จริง</p>
+          <p class="note">ตั้งค่า API base URL ให้ถูกต้องที่ส่วน “การตั้งค่า API” ด้านล่าง</p>
         </div>
         <div class="stack">
           <div class="badge">อุปกรณ์ของคุณ: <span id="deviceLabel">ตรวจสอบ...</span></div>
           <div class="badge">จำนวนแอพในระบบ: <span id="countLabel">0</span></div>
-          <div class="badge">โหมดบันทึก: localStorage (เฉพาะเมตาดาต้า)</div>
+          <div class="badge">บันทึกเมตาดาต้าใน localStorage</div>
         </div>
       </div>
     </section>
 
     <section id="upload" class="panel" hidden>
-      <h2 style="margin-top:0">อัปโหลดแอพหรือโปรแกรม (รองรับไฟล์ 1GB)</h2>
+      <h2 style="margin-top:0">อัปโหลดแอพหรือโปรแกรม (ถึง 1GB)</h2>
 
       <div class="panel" style="margin-bottom:12px">
-        <strong>คำแนะนำ:</strong>
-        <ul style="margin:8px 0 0 18px;">
-          <li>จำเป็นต้องใส่ “ชื่อแอพ” และ “ประเภทแอพ/เกม”</li>
-          <li>ไฟล์มือถือ (APK/AAB) ไม่จำเป็น — ถ้าไม่ใส่ ปุ่มดาวน์โหลดบนมือถือจะเป็นสีเทา</li>
-          <li>มีระบบอัปโหลดเป็นชิ้น (chunk) รองรับไฟล์ถึง 1GB ต้องมีเซิร์ฟเวอร์รับชิ้นและรวมไฟล์</li>
-        </ul>
+        <strong>การตั้งค่า API:</strong>
+        <div class="grid-2" style="margin-top:8px">
+          <div class="field">
+            <label>API Base URL</label>
+            <input class="input" id="apiBaseInput" placeholder="เช่น https://your-server.com" />
+            <div class="hint">ต้องชี้ไปยังเซิร์ฟเวอร์ที่มี endpoint /upload/init, /upload/chunk, /upload/complete</div>
+          </div>
+          <div class="field">
+            <label>เมธอดเริ่มต้นสำหรับ chunk</label>
+            <select class="input" id="chunkMethodInput">
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+            </select>
+            <div class="hint">ถ้า 405 จะสลับเมธอดอัตโนมัติ</div>
+          </div>
+        </div>
       </div>
 
       <div class="grid-2">
@@ -148,7 +158,7 @@
               <div class="field">
                 <label>ไฟล์เดสก์ท็อป</label>
                 <input class="input" type="file" id="desktopFileInput" accept=".exe,.msi,.zip,.rar,.7z,.dmg,.pkg,.bin" />
-                <div class="hint">รองรับไฟล์ใหญ่ถึง 1GB</div>
+                <div class="hint">รองรับไฟล์ใหญ่ถึง 1GB (อัปโหลดเป็น chunk)</div>
               </div>
               <div class="progress-wrap" id="desktopProgressWrap" hidden>
                 <div class="mono" id="desktopProgressText">PC: 0%</div>
@@ -164,7 +174,7 @@
               <div class="field">
                 <label>ไฟล์มือถือ (ไม่จำเป็น)</label>
                 <input class="input" type="file" id="mobileFileInput" accept=".apk,.aab" />
-                <div class="hint">รองรับไฟล์ใหญ่ถึง 1GB</div>
+                <div class="hint">รองรับไฟล์ใหญ่ถึง 1GB (อัปโหลดเป็น chunk)</div>
               </div>
               <div class="progress-wrap" id="mobileProgressWrap" hidden>
                 <div class="mono" id="mobileProgressText">APK: 0%</div>
@@ -180,7 +190,7 @@
         <div class="spacer"></div>
         <button type="button" class="btn btn-primary" id="submitBtn">ตกลงอัปโหลด</button>
       </div>
-      <p class="note">เมตาดาต้าจะถูกบันทึกใน localStorage ส่วนไฟล์จริงจะอยู่บนเซิร์ฟเวอร์ที่คุณกำหนด</p>
+      <p class="note">ถ้าเกิด 405 (Method Not Allowed) ระบบจะลองเมธอดทางเลือกอัตโนมัติและแจ้งผล</p>
     </section>
 
     <section id="list" class="panel" hidden>
@@ -225,7 +235,7 @@
   </main>
 
   <footer>
-    สร้างด้วย HTML/CSS/JS หน้าเดียว — ใช้การอัปโหลดแบบ chunk ไปยังเซิร์ฟเวอร์เพื่อรองรับไฟล์ใหญ่ถึง 1GB
+    สร้างด้วย HTML/CSS/JS หน้าเดียว — ปรับเมธอดอัตโนมัติเมื่อเจอ 405 เพื่อให้อัปโหลดผ่านได้
   </footer>
 
   <script>
@@ -238,7 +248,7 @@
     const device = isMobile() ? 'mobile' : 'desktop';
     qs('#deviceLabel').textContent = isMobile() ? 'มือถือ/แท็บเล็ต' : 'เดสก์ท็อป/แลปท็อป';
 
-    const storageKey = 'community_apps_chunk_v1';
+    const storageKey = 'community_apps_chunk_v2';
     const readStore = () => { try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; } };
     const writeStore = (apps) => { localStorage.setItem(storageKey, JSON.stringify(apps)); qs('#countLabel').textContent = String(apps.length); };
     writeStore(readStore());
@@ -258,6 +268,10 @@
       return idx >= 0 ? name.substring(idx + 1).toLowerCase() : null;
     };
 
+    // ---------- Config refs ----------
+    const $apiBaseInput = qs('#apiBaseInput');
+    const $chunkMethodInput = qs('#chunkMethodInput');
+
     // ---------- Upload form refs ----------
     const $profileInput = qs('#profileInput');
     const $avatarPreview = qs('#avatarPreview');
@@ -270,7 +284,6 @@
     const $mobileFileInput = qs('#mobileFileInput');
     const $submitBtn = qs('#submitBtn');
 
-    // Preview profile image (small, not chunked)
     $profileInput.addEventListener('change', () => {
       const file = $profileInput.files?.[0];
       if (!file) { $avatarPreview.textContent = 'โปรไฟล์'; return; }
@@ -280,93 +293,79 @@
       fr.readAsDataURL(file);
     });
 
-    // ---------- Chunk upload logic (front-end) ----------
+    // ---------- Chunk upload logic with method fallback ----------
     const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
-    const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB ต่อชิ้น (ปรับได้ตามเซิร์ฟเวอร์)
-    const CONCURRENCY = 3; // จำนวนชิ้นที่อัปโหลดพร้อมกัน
+    const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+    const CONCURRENCY = 3;
 
-    const apiBase = ''; // ตั้ง base URL ของ API เซิร์ฟเวอร์ เช่น 'https://your-server.com'
     const endpoints = {
-      init: (kind) => `${apiBase}/upload/init?kind=${encodeURIComponent(kind)}`,
-      chunk: (uploadId, index) => `${apiBase}/upload/chunk?id=${encodeURIComponent(uploadId)}&index=${index}`,
-      complete: (uploadId) => `${apiBase}/upload/complete?id=${encodeURIComponent(uploadId)}`
+      init: (base, kind) => `${base}/upload/init?kind=${encodeURIComponent(kind)}`,
+      chunk: (base, uploadId, index) => `${base}/upload/chunk?id=${encodeURIComponent(uploadId)}&index=${index}`,
+      complete: (base, uploadId) => `${base}/upload/complete?id=${encodeURIComponent(uploadId)}`
     };
 
-    const requestJSON = async (url, method = 'POST', bodyObj = {}) => {
-      const res = await fetch(url, {
-        method,
+    const fetchWithFallback = async (url, optionsPrimary, optionsFallbackIf405) => {
+      const res = await fetch(url, optionsPrimary);
+      if (res.status === 405 && optionsFallbackIf405) {
+        const res2 = await fetch(url, optionsFallbackIf405);
+        if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+        return res2;
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res;
+    };
+
+    const requestJSONNegotiated = async (url, prefer = 'POST', bodyObj = {}) => {
+      const primary = {
+        method: prefer,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyObj)
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      };
+      const fallback = {
+        method: prefer === 'POST' ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyObj)
+      };
+      const res = await fetchWithFallback(url, primary, fallback);
       return res.json();
     };
 
-    const uploadInit = async (file, kind, meta = {}) => {
-      // meta: { filename, size, mime, version }
+    const uploadInit = async (base, file, kind, meta = {}) => {
       const payload = {
         filename: file.name,
         size: file.size,
         mime: file.type || 'application/octet-stream',
-        kind, // 'pc' or 'apk'
+        kind,
         version: meta.version || ''
       };
-      const json = await requestJSON(endpoints.init(kind), 'POST', payload);
-      // server should return { uploadId }
+      // บางเซิร์ฟเวอร์ยอมรับ PUT แทน POST
+      const json = await requestJSONNegotiated(endpoints.init(base, kind), 'POST', payload);
       if (!json.uploadId) throw new Error('init ไม่ได้ uploadId');
       return json.uploadId;
     };
 
-    const uploadChunks = async (file, uploadId, onProgress, progressEls) => {
-      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-      let uploaded = 0;
-
-      // producer of chunk indexes
-      const indexes = Array.from({ length: totalChunks }, (_, i) => i);
-
-      const sendChunk = async (index) => {
-        const start = index * CHUNK_SIZE;
-        const end = Math.min(start + CHUNK_SIZE, file.size);
-        const blob = file.slice(start, end);
-
-        const res = await fetch(endpoints.chunk(uploadId, index), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/octet-stream',
-            'X-Chunk-Start': String(start),
-            'X-Chunk-End': String(end),
-            'X-Chunk-Size': String(end - start),
-            'X-File-Size': String(file.size)
-          },
-          body: blob
-        });
-        if (!res.ok) throw new Error(`chunk ${index} ล้มเหลว (HTTP ${res.status})`);
-
-        uploaded++;
-        const percent = Math.floor((uploaded / totalChunks) * 100);
-        if (onProgress) onProgress(percent);
-        if (progressEls) {
-          progressEls.text.textContent = `${file.name}: ${percent}%`;
-          progressEls.bar.style.width = `${percent}%`;
-        }
+    const uploadChunkNegotiated = async (base, uploadId, index, blob, preferMethod = 'POST') => {
+      const url = endpoints.chunk(base, uploadId, index);
+      const primary = {
+        method: preferMethod,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'X-Chunk-Start': String(index * CHUNK_SIZE),
+          'X-Chunk-End': String(index * CHUNK_SIZE + blob.size),
+          'X-Chunk-Size': String(blob.size)
+        },
+        body: blob
       };
-
-      // run with limited concurrency
-      const pool = [];
-      for (let i = 0; i < CONCURRENCY; i++) {
-        pool.push((async function worker() {
-          while (indexes.length) {
-            const idx = indexes.shift();
-            await sendChunk(idx);
-          }
-        })());
-      }
-      await Promise.all(pool);
+      const fallback = {
+        method: preferMethod === 'POST' ? 'PUT' : 'POST',
+        headers: primary.headers,
+        body: blob
+      };
+      await fetchWithFallback(url, primary, fallback);
     };
 
-    const uploadComplete = async (uploadId) => {
-      const json = await requestJSON(endpoints.complete(uploadId), 'POST', {});
-      // server should return { url } to download
+    const uploadComplete = async (base, uploadId) => {
+      const json = await requestJSONNegotiated(endpoints.complete(base, uploadId), 'POST', {});
       if (!json.url) throw new Error('complete ไม่ได้ URL');
       return json.url;
     };
@@ -376,6 +375,9 @@
       const category = $categoryInput.value.trim();
       if (!name) return 'กรุณาใส่ชื่อแอพ';
       if (!category) return 'กรุณาเลือกประเภทแอพ/เกม';
+
+      const apiBase = ($apiBaseInput.value || '').trim();
+      if (!apiBase) return 'กรุณาตั้งค่า API Base URL';
 
       const desktopFile = $desktopFileInput.files?.[0] || null;
       const mobileFile = $mobileFileInput.files?.[0] || null;
@@ -410,6 +412,9 @@
       const msg = validateInputs();
       if (msg) { alert(msg); return; }
 
+      const apiBase = ($apiBaseInput.value || '').trim().replace(/\/+$/,'');
+      const preferredChunkMethod = $chunkMethodInput.value;
+
       const name = $nameInput.value.trim();
       const category = $categoryInput.value.trim();
       const description = $descInput.value.trim();
@@ -419,7 +424,6 @@
       const profileFile = $profileInput.files?.[0] || null;
       let profileUrl = null;
       if (profileFile) {
-        // small image: convert to dataURL for local preview
         const fr = new FileReader();
         profileUrl = await new Promise((resolve) => {
           fr.onload = () => resolve(fr.result);
@@ -438,34 +442,66 @@
         let desktopUrl = null;
         let mobileUrl = null;
 
-        // Upload PC file in chunks
+        // Upload PC file
         if (desktopFile) {
           $desktopProgressWrap.hidden = false;
           $desktopProgressText.textContent = 'กำลังเริ่มอัปโหลด PC...';
           $desktopProgressBar.style.width = '0%';
 
-          const pcUploadId = await uploadInit(desktopFile, 'pc', {
-            version: desktopVersion
-          });
-          await uploadChunks(desktopFile, pcUploadId, (p) => {
-            // extra hook (optional)
-          }, { text: $desktopProgressText, bar: $desktopProgressBar });
-          desktopUrl = await uploadComplete(pcUploadId);
+          const pcUploadId = await uploadInit(apiBase, desktopFile, 'pc', { version: desktopVersion });
+
+          const totalChunks = Math.ceil(desktopFile.size / CHUNK_SIZE);
+          let uploaded = 0;
+          const indexes = Array.from({ length: totalChunks }, (_, i) => i);
+
+          const worker = async () => {
+            while (indexes.length) {
+              const index = indexes.shift();
+              const start = index * CHUNK_SIZE;
+              const end = Math.min(start + CHUNK_SIZE, desktopFile.size);
+              const blob = desktopFile.slice(start, end);
+              await uploadChunkNegotiated(apiBase, pcUploadId, index, blob, preferredChunkMethod);
+              uploaded++;
+              const percent = Math.floor((uploaded / totalChunks) * 100);
+              $desktopProgressText.textContent = `PC: ${percent}%`;
+              $desktopProgressBar.style.width = `${percent}%`;
+            }
+          };
+          await Promise.all([worker(), worker(), worker()].slice(0, CONCURRENCY));
+
+          desktopUrl = await uploadComplete(apiBase, pcUploadId);
           $desktopProgressText.textContent = 'PC: เสร็จสิ้น 100%';
           $desktopProgressBar.style.width = '100%';
         }
 
-        // Upload APK file in chunks (optional)
+        // Upload APK file (optional)
         if (mobileFile) {
           $mobileProgressWrap.hidden = false;
           $mobileProgressText.textContent = 'กำลังเริ่มอัปโหลด APK...';
           $mobileProgressBar.style.width = '0%';
 
-          const apkUploadId = await uploadInit(mobileFile, 'apk', {
-            version: mobileVersion
-          });
-          await uploadChunks(mobileFile, apkUploadId, (p) => {}, { text: $mobileProgressText, bar: $mobileProgressBar });
-          mobileUrl = await uploadComplete(apkUploadId);
+          const apkUploadId = await uploadInit(apiBase, mobileFile, 'apk', { version: mobileVersion });
+
+          const totalChunks = Math.ceil(mobileFile.size / CHUNK_SIZE);
+          let uploaded = 0;
+          const indexes = Array.from({ length: totalChunks }, (_, i) => i);
+
+          const worker = async () => {
+            while (indexes.length) {
+              const index = indexes.shift();
+              const start = index * CHUNK_SIZE;
+              const end = Math.min(start + CHUNK_SIZE, mobileFile.size);
+              const blob = mobileFile.slice(start, end);
+              await uploadChunkNegotiated(apiBase, apkUploadId, index, blob, preferredChunkMethod);
+              uploaded++;
+              const percent = Math.floor((uploaded / totalChunks) * 100);
+              $mobileProgressText.textContent = `APK: ${percent}%`;
+              $mobileProgressBar.style.width = `${percent}%`;
+            }
+          };
+          await Promise.all([worker(), worker(), worker()].slice(0, CONCURRENCY));
+
+          mobileUrl = await uploadComplete(apiBase, apkUploadId);
           $mobileProgressText.textContent = 'APK: เสร็จสิ้น 100%';
           $mobileProgressBar.style.width = '100%';
         }
@@ -474,18 +510,18 @@
         const app = {
           id: 'app_' + Date.now(),
           name, category, description,
-          profileUrl: profileUrl,
+          profileUrl,
           desktop: {
             version: desktopVersion,
             fileName: desktopFile?.name || '',
             fileExt: extFromName(desktopFile?.name || ''),
-            url: desktopUrl // URL จากเซิร์ฟเวอร์
+            url: desktopUrl
           },
           mobile: {
             version: mobileVersion,
             fileName: mobileFile?.name || '',
             fileExt: extFromName(mobileFile?.name || ''),
-            url: mobileUrl // URL จากเซิร์ฟเวอร์
+            url: mobileUrl
           },
           createdAt: new Date().toISOString()
         };
@@ -505,7 +541,6 @@
         renderList();
         navigate('list');
       } catch (err) {
-        console.error(err);
         alert('อัปโหลดไม่สำเร็จ: ' + (err?.message || 'ไม่ทราบสาเหตุ'));
       } finally {
         uploading = false;
@@ -598,7 +633,6 @@
         filename = app.mobile.fileName || `${app.name}-APK.${app.mobile.fileExt || 'apk'}`;
       }
 
-      // เปิดดาวน์โหลดผ่านลิงก์ URL จากเซิร์ฟเวอร์
       const a = document.createElement('a');
       a.href = url;
       a.download = filename;
